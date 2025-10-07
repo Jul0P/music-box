@@ -1,0 +1,17 @@
+{
+  "name": "music-box",
+  "version": "1.0.0",
+  "description": "GitHub Action to display Spotify stats in a GitHub Gist",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "music-box",
+  "license": "MIT",
+  "dependencies": {
+    "@actions/core": "^1.10.0",
+    "@octokit/rest": "^20.0.0",
+    "dotenv": "^17.2.3",
+    "node-fetch": "^2.6.9"
+  }
+}

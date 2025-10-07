@@ -1,0 +1,22 @@
+name: Update music box
+on:
+  schedule:
+    - cron: '0 0 * * *'
+  workflow_dispatch:
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.
+        with:
+          provider: spotify
+          mode: top_tracks
+          limit: 10
+        env:
+          GIST_ID: ${{ secrets.GIST_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SPOTIFY_CLIENT_ID: ${{ secrets.SPOTIFY_CLIENT_ID }}
+          SPOTIFY_CLIENT_SECRET: ${{ secrets.SPOTIFY_CLIENT_SECRET }}
+          SPOTIFY_REFRESH_TOKEN: ${{ secrets.SPOTIFY_REFRESH_TOKEN }}
