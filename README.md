@@ -29,6 +29,18 @@ Add these secrets:
 - `SPOTIFY_CLIENT_SECRET`
 - `SPOTIFY_REFRESH_TOKEN`
 
+#### For Last.fm:
+
+1. Go to https://www.last.fm/api/account/create
+2. Create an API account
+3. Note your **API Key**
+4. Note your **Last.fm username**
+
+**For other providers (via Last.fm):**
+
+- `LASTFM_API_KEY`
+- `LASTFM_USER`
+
 ### 4. The workflow will run automatically
 
 The action is configured in `.github/workflows/update.yml` and runs daily.

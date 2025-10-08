@@ -1,12 +1,14 @@
 const core = require('@actions/core');
+const providerCore = require('./core/provider');
 const { updateGist } = require('./core/gist');
 const formatter = require('./core/formatter');
-const spotify = require('./providers/spotify');
 
 require('dotenv').config();
 
 async function run() {
   try {
+    const providerName = core.getInput('provider') || process.env.PROVIDER || 'spotify';
+    const mode = core.getInput('mode') || process.env.MODE || 'top_tracks';
     const limit = parseInt(core.getInput('limit') || process.env.LIMIT || '10', 10);
     const period = core.getInput('period') || process.env.PERIOD || '4w';
 
@@ -18,9 +20,12 @@ async function run() {
 
     core.setSecret(GITHUB_TOKEN);
 
-    const items = await spotify.getTopTracks({ limit, period });
+    const provider = providerCore.getProvider(providerName);
+    const displayName = providerCore.getProviderDisplayName(providerName);
 
-    const formattedData = formatter.formatTracks('Spotify', 'top_tracks', items, { limit, period });
+    const items = await provider.getTopTracks({ limit, period });
+
+    const formattedData = formatter.formatTracks(displayName, mode, 'title_artist', items, { limit, period });
 
     await updateGist(GIST_ID, formattedData, GITHUB_TOKEN);
 
