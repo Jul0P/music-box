@@ -31,6 +31,7 @@ async function getTopTracks({ limit = 10, period = '4w' }) {
   return tracks.map((track) => ({
     title: track.name,
     artist: track.artist.name,
+    plays: track.playcount,
   }));
 }
 

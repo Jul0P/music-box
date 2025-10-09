@@ -1,5 +1,5 @@
 name: 'Music Box'
-description: 'Display your Spotify top tracks in a GitHub Gist'
+description: 'Display your top tracks from Spotify, Qobuz, Apple Music, Amazon Music, Deezer, YouTube Music, Tidal in a GitHub Gist.'
 author: 'music-box'
 runs:
   using: 'node20'
@@ -7,11 +7,11 @@ runs:
 
 inputs:
   provider:
-    description: 'Music service provider (spotify)'
+    description: 'Music service provider (spotify, lastfm)'
     required: true
     default: 'spotify'
   mode:
-    description: 'Mode: top_tracks'
+    description: 'Mode: top_tracks or recent_tracks'
     required: false
     default: 'top_tracks'
   limit:
@@ -19,6 +19,10 @@ inputs:
     required: false
     default: '10'
   period:
-    description: 'Time range (7d, 4w, 6m, 1y)'
+    description: 'Time range (7d, 4w, 6m, 1y) - provider dependent'
     required: false
     default: '4w'
+  display_mode:
+    description: 'Display format: title_artist, title_plays, title_album'
+    required: false
+    default: 'title_artist'

@@ -1,33 +1,70 @@
-function truncate(str, maxLen) {
-  if (!str) return '';
-  str = String(str).trim();
-  if (str.length <= maxLen) return str;
-  return str.substring(0, maxLen - 1).trim() + '…';
+const eaw = require('eastasianwidth');
+
+const FIXED_LEFT_WIDTH = 38;
+const FIXED_RIGHT_WIDTH = 20;
+
+function getDisplayWidth(str) {
+  let width = 0;
+  for (const char of str) {
+    const w = eaw.eastAsianWidth(char);
+    if (w === 'F' || w === 'W') {
+      width += 2;
+    } else {
+      width += 1;
+    }
+  }
+  return width;
 }
 
-function formatTracks(providerName, mode, tracks = [], opts = {}) {
-  const numTracks = Math.min(opts.limit || 10, tracks.length || 0);
-  const lines = [];
+function truncate(str, maxWidth) {
+  let width = 0;
+  let result = '';
 
-  const TITLE_WIDTH = 40;
-  const ARTIST_WIDTH = 20;
-
-  for (let i = 0; i < numTracks; i++) {
-    const t = tracks[i] || {};
-    const title = truncate(t.title || t.name || '', TITLE_WIDTH);
-    const artist = truncate(t.artist || '', ARTIST_WIDTH);
-
-    const left = title.padEnd(TITLE_WIDTH);
-    const right = artist.padStart(ARTIST_WIDTH);
-
-    lines.push(left + right);
+  for (const char of str) {
+    const charWidth = eaw.eastAsianWidth(char) === 'F' || eaw.eastAsianWidth(char) === 'W' ? 2 : 1;
+    if (width + charWidth > maxWidth) {
+      result += '…';
+      break;
+    }
+    width += charWidth;
+    result += char;
   }
 
-  const modeLabel = 'Top Tracks';
-  const titleText = `🎵 My ${providerName} ${modeLabel}`;
+  return result;
+}
+
+function padForEastAsian(str, targetWidth) {
+  const currentWidth = getDisplayWidth(str);
+  const spacesNeeded = Math.max(0, targetWidth - currentWidth);
+  return str + ' '.repeat(spacesNeeded);
+}
+
+function formatTracks(displayName, mode, displayMode, items, options) {
+  const lines = items.map((item) => {
+    const leftText = truncate(item.title || '', FIXED_LEFT_WIDTH);
+    const leftPadded = padForEastAsian(leftText, FIXED_LEFT_WIDTH);
+
+    let rightText = '';
+
+    if (displayMode === 'title_artist') {
+      rightText = item.artist || '';
+    } else if (displayMode === 'title_plays') {
+      rightText = item.plays ? `${item.plays} plays` : '';
+    } else if (displayMode === 'title_album') {
+      rightText = item.album || '';
+    }
+
+    const rightTruncated = truncate(rightText, FIXED_RIGHT_WIDTH);
+
+    return leftPadded + rightTruncated;
+  });
+
+  const modeLabel = mode === 'top_tracks' ? 'Top Tracks' : 'Recent Tracks';
+  const periodLabel = options.period ? ` (${options.period})` : '';
+  const title = `🎵 ${displayName} - ${modeLabel}${periodLabel}`;
   const content = lines.join('\n');
 
-  return { title: titleText, content };
+  return { title, content };
 }
 
 module.exports = { formatTracks };
