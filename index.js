@@ -40,7 +40,15 @@ async function run() {
     const provider = providerCore.getProvider(providerName);
     const displayName = providerCore.getProviderDisplayName(providerName);
 
-    const items = await provider.getTopTracks({ limit, period });
+    let items = [];
+    if (mode === 'top_tracks') {
+      items = await provider.getTopTracks({ limit, period });
+    } else if (mode === 'recent_tracks') {
+      if (!provider.getRecentTracks) {
+        throw new Error(`Provider ${providerName} does not support recent_tracks`);
+      }
+      items = await provider.getRecentTracks({ limit });
+    }
 
     const formattedData = formatter.formatTracks(displayName, mode, displayMode, items, { limit, period });
 

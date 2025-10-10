@@ -58,4 +58,24 @@ async function getTopTracks({ limit = 10, period = '4w' }) {
   }));
 }
 
-module.exports = { getTopTracks };
+async function getRecentTracks({ limit = 10 }) {
+  const accessToken = await getAccessTokenFromRefresh();
+
+  const response = await fetch(`https://api.spotify.com/v1/me/player/recently-played?limit=${limit}`, {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(`Spotify API error: ${data.error?.message || 'Unknown error'}`);
+  }
+
+  return data.items.map((item) => ({
+    title: item.track.name,
+    artist: item.track.artists.map((a) => a.name).join(', '),
+    album: item.track.album.name,
+  }));
+}
+
+module.exports = { getTopTracks, getRecentTracks };

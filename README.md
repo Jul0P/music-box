@@ -10,6 +10,15 @@ A GitHub Action that displays your Spotify top tracks in a pinned GitHub Gist.
 | `title_plays`  | Title + Play count | ✅ Last.fm top_tracks only                           |
 | `title_album`  | Title + Album      | ✅ Spotify (all modes), Last.fm (recent_tracks only) |
 
+### Display Mode Compatibility Matrix
+
+| Provider    | Mode          | title_artist | title_plays | title_album |
+| ----------- | ------------- | ------------ | ----------- | ----------- |
+| **Spotify** | top_tracks    | ✅           | ❌          | ✅          |
+| **Spotify** | recent_tracks | ✅           | ❌          | ✅          |
+| **Last.fm** | top_tracks    | ✅           | ✅          | ❌          |
+| **Last.fm** | recent_tracks | ✅           | ❌          | ✅          |
+
 **Note**: When a mode is not available, the display will show empty values or fall back to `title_artist`.
 
 ## 🚀 Quick Start
