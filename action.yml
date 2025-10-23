@@ -7,7 +7,7 @@ runs:
 
 inputs:
   provider:
-    description: 'Music service provider (spotify, lastfm)'
+    description: 'Music service provider (spotify, qobuz, apple, amazon, deezer, youtube, tidal)'
     required: true
     default: 'spotify'
   mode:
@@ -23,6 +23,6 @@ inputs:
     required: false
     default: '4w'
   display_mode:
-    description: 'Display format: title_artist, title_plays, title_album'
+    description: 'Display format: title_artist (all), title_plays (Last.fm top_tracks only), title_album (Spotify all, Last.fm recent_tracks)'
     required: false
     default: 'title_artist'

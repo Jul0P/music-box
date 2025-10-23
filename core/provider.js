@@ -1,26 +1,39 @@
 const spotify = require('../providers/spotify');
 const lastfm = require('../providers/lastfm');
 
-function getProvider(providerName) {
-  const normalized = providerName.toLowerCase();
+const LASTFM_PROVIDERS = ['qobuz', 'apple', 'applemusic', 'amazon', 'amazonmusic', 'deezer', 'youtube', 'youtubemusic', 'tidal'];
 
-  if (normalized === 'spotify') {
+function getProvider(name) {
+  const normalizedName = (name || '').toLowerCase().replace(/[_\s-]/g, '');
+
+  if (normalizedName === 'spotify') {
     return spotify;
   }
 
-  if (normalized === 'lastfm') {
+  if (LASTFM_PROVIDERS.includes(normalizedName)) {
     return lastfm;
   }
 
-  throw new Error(`Provider ${providerName} not supported`);
+  return null;
 }
 
-function getProviderDisplayName(providerName) {
-  const names = {
+function getProviderDisplayName(name) {
+  const normalizedName = (name || '').toLowerCase().replace(/[_\s-]/g, '');
+
+  const displayNames = {
     spotify: 'Spotify',
-    lastfm: 'Last.fm',
+    qobuz: 'Qobuz',
+    apple: 'Apple Music',
+    applemusic: 'Apple Music',
+    amazon: 'Amazon Music',
+    amazonmusic: 'Amazon Music',
+    deezer: 'Deezer',
+    youtube: 'YouTube Music',
+    youtubemusic: 'YouTube Music',
+    tidal: 'Tidal',
   };
-  return names[providerName.toLowerCase()] || providerName;
+
+  return displayNames[normalizedName] || name.charAt(0).toUpperCase() + name.slice(1);
 }
 
 module.exports = { getProvider, getProviderDisplayName };

@@ -32,22 +32,21 @@ async function run() {
     const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
     const GIST_ID = process.env.GIST_ID;
 
-    if (!GITHUB_TOKEN) throw new Error('GITHUB_TOKEN is required');
-    if (!GIST_ID) throw new Error('GIST_ID is required');
+    if (!GITHUB_TOKEN) throw new Error('GITHUB_TOKEN is required as a secret');
+    if (!GIST_ID) throw new Error('GIST_ID is required as a secret');
 
     core.setSecret(GITHUB_TOKEN);
 
     const provider = providerCore.getProvider(providerName);
+    if (!provider) throw new Error(`Provider ${providerName} not supported`);
+
     const displayName = providerCore.getProviderDisplayName(providerName);
 
     let items = [];
     if (mode === 'top_tracks') {
       items = await provider.getTopTracks({ limit, period });
     } else if (mode === 'recent_tracks') {
-      if (!provider.getRecentTracks) {
-        throw new Error(`Provider ${providerName} does not support recent_tracks`);
-      }
-      items = await provider.getRecentTracks({ limit });
+      items = provider.getRecentTracks ? await provider.getRecentTracks({ limit }) : [];
     }
 
     const formattedData = formatter.formatTracks(displayName, mode, displayMode, items, { limit, period });

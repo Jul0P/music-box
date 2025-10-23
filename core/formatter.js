@@ -1,67 +1,59 @@
 const eaw = require('eastasianwidth');
 
-const FIXED_LEFT_WIDTH = 38;
-const FIXED_RIGHT_WIDTH = 20;
+function truncate(str, maxLen) {
+  if (!str) return '';
+  str = String(str).trim();
+  if (eaw.length(str) <= maxLen) return str;
 
-function getDisplayWidth(str) {
-  let width = 0;
-  for (const char of str) {
-    const w = eaw.eastAsianWidth(char);
-    if (w === 'F' || w === 'W') {
-      width += 2;
-    } else {
-      width += 1;
-    }
+  let cut = str.substring(0, maxLen - 1);
+  const lastSpace = cut.lastIndexOf(' ');
+  if (lastSpace > Math.floor(maxLen * 0.6)) {
+    cut = cut.substring(0, lastSpace);
   }
-  return width;
+  return cut.trim() + '…';
 }
 
-function truncate(str, maxWidth) {
-  let width = 0;
-  let result = '';
+function padForEastAsian(str, width, padEnd = true) {
+  const len = eaw.length(str);
+  if (len >= width) return str;
+  const diff = width - len;
+  if (padEnd) return str + ' '.repeat(diff);
+  else return ' '.repeat(diff) + str;
+}
 
-  for (const char of str) {
-    const charWidth = eaw.eastAsianWidth(char) === 'F' || eaw.eastAsianWidth(char) === 'W' ? 2 : 1;
-    if (width + charWidth > maxWidth) {
-      result += '…';
-      break;
-    }
-    width += charWidth;
-    result += char;
+function formatTracks(providerName, mode, displayMode, tracks = [], opts = {}) {
+  const numTracks = Math.min(opts.limit || 10, tracks.length || 0);
+  const lines = [];
+
+  const FIXED_LEFT_WIDTH = 38;
+  const FIXED_RIGHT_WIDTH = 20;
+
+  for (let i = 0; i < numTracks; i++) {
+    const t = tracks[i] || {};
+    const titleRaw = t.title || t.name || '';
+    const valueRaw =
+      displayMode === 'title_artist'
+        ? t.artist || t.artist_name || ''
+        : displayMode === 'title_plays'
+        ? String(t.plays || t.playcount || '')
+        : displayMode === 'title_album'
+        ? t.album || t.album_name || ''
+        : t.artist || t.artist_name || '';
+
+    const title = truncate(titleRaw, FIXED_LEFT_WIDTH);
+    const value = truncate(valueRaw, FIXED_RIGHT_WIDTH);
+
+    const left = padForEastAsian(title, FIXED_LEFT_WIDTH, true);
+    const right = padForEastAsian(value, FIXED_RIGHT_WIDTH, false);
+
+    lines.push(left + right);
   }
 
-  return result;
-}
-
-function padForEastAsian(str, targetWidth) {
-  const currentWidth = getDisplayWidth(str);
-  const spacesNeeded = Math.max(0, targetWidth - currentWidth);
-  return str + ' '.repeat(spacesNeeded);
-}
-
-function formatTracks(displayName, mode, displayMode, items, options) {
-  const lines = items.map((item) => {
-    const leftText = truncate(item.title || '', FIXED_LEFT_WIDTH);
-    const leftPadded = padForEastAsian(leftText, FIXED_LEFT_WIDTH);
-
-    let rightText = '';
-
-    if (displayMode === 'title_artist') {
-      rightText = item.artist || '';
-    } else if (displayMode === 'title_plays') {
-      rightText = item.plays ? `${item.plays} plays` : '';
-    } else if (displayMode === 'title_album') {
-      rightText = item.album || '';
-    }
-
-    const rightTruncated = truncate(rightText, FIXED_RIGHT_WIDTH);
-
-    return leftPadded + rightTruncated;
-  });
-
+  const providerLabel = providerName.charAt(0).toUpperCase() + providerName.slice(1);
   const modeLabel = mode === 'top_tracks' ? 'Top Tracks' : 'Recent Tracks';
-  const periodLabel = options.period ? ` (${options.period})` : '';
-  const title = `🎵 ${displayName} - ${modeLabel}${periodLabel}`;
+
+  const title = `🎵 My ${providerLabel} ${modeLabel}`;
+
   const content = lines.join('\n');
 
   return { title, content };

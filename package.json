@@ -1,7 +1,7 @@
 {
   "name": "music-box",
   "version": "1.0.0",
-  "description": "GitHub Action to display Spotify stats in a GitHub Gist",
+  "description": "GitHub Action to publish music stats to a Gist (Spotify, Last.fm (Qobuz, Apple Music, Amazon Music, Deezer, YouTube Music, Tidal))",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -12,6 +12,7 @@
     "@actions/core": "^1.10.0",
     "@octokit/rest": "^20.0.0",
     "dotenv": "^17.2.3",
+    "eastasianwidth": "^0.2.0",
     "node-fetch": "^2.6.9"
   }
 }
