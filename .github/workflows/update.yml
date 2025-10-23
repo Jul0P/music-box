@@ -11,7 +11,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: ./.
         with:
-          provider: spotify
+          provider: qobuz
           mode: top_tracks
           limit: 10
           display_mode: title_artist
