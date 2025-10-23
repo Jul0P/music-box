@@ -1,6 +1,9 @@
 name: 'Music Box'
 description: 'Display your top tracks from Spotify, Qobuz, Apple Music, Amazon Music, Deezer, YouTube Music, Tidal in a GitHub Gist.'
 author: 'music-box'
+branding:
+  icon: 'music'
+  color: 'white'
 runs:
   using: 'node20'
   main: 'index.js'
