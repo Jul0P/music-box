@@ -67,7 +67,7 @@ In your repository: **Settings → Secrets and variables → Actions → New rep
 
 **Required for all:**
 
-- `GITHUB_TOKEN` (automatically provided by GitHub Actions)
+- `GH_TOKEN` (automatically provided by GitHub Actions)
 - `GIST_ID` (your gist ID)
 
 **For Spotify:**
@@ -129,7 +129,7 @@ with:
 Example `.env`:
 
 ```env
-GITHUB_TOKEN=ghp_your_token
+GH_TOKEN=ghp_your_token
 GIST_ID=your_gist_id
 PROVIDER=spotify
 MODE=top_tracks

@@ -29,13 +29,13 @@ async function run() {
       throw new Error(`Invalid display_mode: ${displayMode}. Must be 'title_artist', 'title_plays', or 'title_album'`);
     }
 
-    const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+    const GH_TOKEN = process.env.GH_TOKEN;
     const GIST_ID = process.env.GIST_ID;
 
-    if (!GITHUB_TOKEN) throw new Error('GITHUB_TOKEN is required as a secret');
+    if (!GH_TOKEN) throw new Error('GH_TOKEN is required as a secret');
     if (!GIST_ID) throw new Error('GIST_ID is required as a secret');
 
-    core.setSecret(GITHUB_TOKEN);
+    core.setSecret(GH_TOKEN);
 
     const provider = providerCore.getProvider(providerName);
     if (!provider) throw new Error(`Provider ${providerName} not supported`);
@@ -51,7 +51,7 @@ async function run() {
 
     const formattedData = formatter.formatTracks(displayName, mode, displayMode, items, { limit, period });
 
-    await updateGist(GIST_ID, formattedData, GITHUB_TOKEN);
+    await updateGist(GIST_ID, formattedData, GH_TOKEN);
 
     core.info('Gist updated successfully');
   } catch (error) {
