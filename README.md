@@ -37,23 +37,63 @@ A GitHub Action that displays your music listening statistics from various strea
 
 - Go to https://gist.github.com
 - Create a new **public** gist (or private if you prefer)
-- Add any filename and content (will be overwritten)
-- Note the **Gist ID** from the URL (e.g., `abc123def456`)
+- Add any filename and content (it will be replaced automatically by the action)
+- After creating the gist, look at the URL in your browser
+- The **Gist ID** is the long alphanumeric string at the end of the URL
+  - Example: `https://gist.github.com/username/`**`a1b2c3d4e5f6g7h8i9j0`**
+  - Your Gist ID would be: `a1b2c3d4e5f6g7h8i9j0`
 
 ### 2. Get your credentials
 
 #### For Spotify:
 
-1. Go to https://developer.spotify.com/dashboard
-2. Create an app
-3. Add redirect URI: `https://example.com/callback`
-4. Note your **Client ID** and **Client Secret**
-5. Use Postman or an online tool to get a **Refresh Token** with these scopes:
+1. **Create a Spotify App:**
+
+   - Go to https://developer.spotify.com/dashboard
+   - Click **"Create app"**
+   - Fill in:
+     - App name: `music-box` (or any name)
+     - App description: `GitHub profile music stats`
+     - Redirect URI: `http://127.0.0.1:8000/callback`
+   - Accept terms and click **"Save"**
+
+2. **Get your credentials:**
+
+   - Copy your **Client ID**
+   - Click **"Show Client Secret"** and copy your **Client Secret**
+
+3. **Get a Refresh Token with Postman:**
+
+   **Step 1: Get Authorization Code**
+
+   - Open this URL in your browser (replace `YOUR_CLIENT_ID`):
+
    ```
-   user-read-private user-read-email user-top-read user-read-recently-played
+   https://accounts.spotify.com/authorize?client_id=YOUR_CLIENT_ID&response_type=code&redirect_uri=http://127.0.0.1:8000/callback&scope=user-read-private%20user-read-email%20user-top-read%20user-read-recently-played
    ```
 
-#### For Last.fm (Qobuz, Apple Music, etc.):
+   - Accept the permissions
+   - You'll be redirected to `http://127.0.0.1:8000/callback?code=XXXXX`
+   - Copy the **code** from the URL (the `XXXXX` part)
+
+   **Step 2: Exchange Code for Refresh Token in Postman**
+
+   - Open Postman and create a new **POST** request
+   - URL: `https://accounts.spotify.com/api/token`
+   - Go to **Authorization** tab:
+     - Type: `Basic Auth`
+     - Username: Your **Client ID**
+     - Password: Your **Client Secret**
+   - Go to **Body** tab:
+     - Select `x-www-form-urlencoded`
+     - Add these key-value pairs:
+       - `grant_type` = `authorization_code`
+       - `code` = `THE_CODE_FROM_STEP_1`
+       - `redirect_uri` = `http://127.0.0.1:8000/callback`
+   - Click **Send**
+   - In the response, copy the **refresh_token** value
+
+#### For Last.fm (Qobuz, Apple Music, Amazon Music, Deezer, YouTube Music, Tidal):
 
 1. Go to https://www.last.fm/api/account/create
 2. Create an API account
@@ -67,8 +107,8 @@ In your repository: **Settings → Secrets and variables → Actions → New rep
 
 **Required for all:**
 
-- `GH_TOKEN` (automatically provided by GitHub Actions)
-- `GIST_ID` (your gist ID)
+- `GH_TOKEN` (GitHub Personal Access Token with `gist` permission - [Create one here](https://github.com/settings/tokens/new?scopes=gist&description=music-box-gist))
+- `GIST_ID` (your gist ID from [step 1](#1-create-a-gist))
 
 **For Spotify:**
 
@@ -93,6 +133,7 @@ schedule:
   # - cron: '0 */6 * * *'   # Every 6 hours
   # - cron: '0 */12 * * *'  # Every 12 hours
   # - cron: '0 9,18 * * *'  # Twice daily (9 AM & 6 PM UTC)
+  # etc...
 ```
 
 **Provider and display options:**
@@ -122,9 +163,9 @@ with:
 
 ## 🔧 Local Testing
 
-1. Copy `sample.env` to `.env`
+1. Copy `.env.example` to `.env`
 2. Fill in your credentials
-3. Run: `node index.js`
+3. Run: `npm start` (or `node index.js`)
 
 Example `.env`:
 
@@ -133,6 +174,8 @@ GH_TOKEN=ghp_your_token
 GIST_ID=your_gist_id
 PROVIDER=spotify
 MODE=top_tracks
+LIMIT=10
+PERIOD=4w
 DISPLAY_MODE=title_artist
 
 # Spotify
