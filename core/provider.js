@@ -1,7 +1,7 @@
 const spotify = require('../providers/spotify');
 const lastfm = require('../providers/lastfm');
 
-const LASTFM_PROVIDERS = ['qobuz', 'apple', 'applemusic', 'amazon', 'amazonmusic', 'deezer', 'youtube', 'youtubemusic', 'tidal'];
+const LASTFM_PROVIDERS = ['lastfm', 'qobuz', 'apple', 'applemusic', 'amazon', 'amazonmusic', 'deezer', 'youtube', 'youtubemusic', 'tidal'];
 
 function getProvider(name) {
   const normalizedName = (name || '').toLowerCase().replace(/[_\s-]/g, '');
@@ -22,6 +22,7 @@ function getProviderDisplayName(name) {
 
   const displayNames = {
     spotify: 'Spotify',
+    lastfm: 'Last.fm',
     qobuz: 'Qobuz',
     apple: 'Apple Music',
     applemusic: 'Apple Music',
