@@ -7,11 +7,12 @@ require('dotenv').config();
 
 async function run() {
   try {
-    const providerName = core.getInput('provider') || process.env.PROVIDER || 'spotify';
-    const mode = core.getInput('mode') || process.env.MODE || 'top_tracks';
-    const limit = parseInt(core.getInput('limit') || process.env.LIMIT || '10', 10);
-    const period = core.getInput('period') || process.env.PERIOD || '4w';
-    const displayMode = core.getInput('display_mode') || process.env.DISPLAY_MODE || 'title_artist';
+    // Priority: 1. Secrets (env vars), 2. Workflow inputs, 3. Defaults
+    const providerName = process.env.PROVIDER || core.getInput('provider') || 'spotify';
+    const mode = process.env.MODE || core.getInput('mode') || 'top_tracks';
+    const limit = parseInt(process.env.LIMIT || core.getInput('limit') || '10', 10);
+    const period = process.env.PERIOD || core.getInput('period') || '4w';
+    const displayMode = process.env.DISPLAY_MODE || core.getInput('display_mode') || 'title_artist';
 
     if (!['top_tracks', 'recent_tracks'].includes(mode)) {
       throw new Error(`Invalid mode: ${mode}. Must be 'top_tracks' or 'recent_tracks'`);
