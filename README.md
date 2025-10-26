@@ -121,6 +121,18 @@ In your repository: **Settings → Secrets and variables → Actions → New rep
 - `LASTFM_API_KEY`
 - `LASTFM_USER`
 
+**Optional - Override workflow settings via secrets:**
+
+You can override the workflow configuration without editing the file by adding these secrets:
+
+- `PROVIDER` - Override the provider (`spotify`, `qobuz`, `apple`, `amazon`, `deezer`, `youtube`, `tidal` - default: `spotify`)
+- `MODE` - Override mode (`top_tracks`, `recent_tracks` - default: `top_tracks`)
+- `LIMIT` - Override number of tracks (1-50 - default: `10`)
+- `PERIOD` - Override time range (`7d`, `4w`, `6m`, `1y` - default: `4w`)
+- `DISPLAY_MODE` - Override display format (`title_artist`, `title_plays`, `title_album` - default: `title_artist`)
+
+**Priority order:** Secrets > Workflow settings > Default values
+
 ### 4. Customize the workflow (optional)
 
 Edit `.github/workflows/update.yml` to change settings:
